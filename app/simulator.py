@@ -1,4 +1,5 @@
 from models import *
+import csv, os, time, math
 
 def basic_controller(time_hr, ders):
     for der in ders:
@@ -30,10 +31,31 @@ class Simulator:
 
         self.time_hr += dt_hr
         self.history.append(self.get_state())
+
+# rootpath = os.getcwd()
+binpath = os.path.join('bin','../')
+
         
-solar = Solar("Solar A", 300)
+solar = Solar("Solar A", 3000)
 battery = Battery("Battery A", 2000, 500)
 sim = Simulator([solar, battery], controller=basic_controller)
-for _ in range(24):
-    sim.step(1)
-    print(sim.get_state())
+# history_file = os.path.join(binpath,f'../bin/history_{math.floor(time.time())}.csv')
+history_file = os.path.join(binpath,f'../bin/history.csv')
+
+with open(history_file, 'w') as f:
+    csv_writer = csv.writer(f)
+    headers = ["time_hr", "der_name", "actual_power_kw", "target_power_kw", "soc_percent"]
+    csv_writer.writerow(headers)
+    for _ in range(24):
+        sim.step(1)
+        state = sim.get_state()
+        for der in state["ders"]:
+            print(der.get("Name", ""))
+            row = [
+                state["time_hr"],
+                der.get("Name", ""),
+                der.get("Current Actual Power", ""),
+                der.get("Current Target Power", ""),
+                der.get("State of Charge", "")  # only Battery will have this
+            ]
+            csv_writer.writerow(row)
