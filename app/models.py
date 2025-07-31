@@ -43,11 +43,33 @@ class Battery(DER):
             "Current Target Power": self.target_power_kw
         }
         return state
+
+class Solar(DER):
+    def __init__(self, name, max_power_kw):
+        self.name = name
+        self.max_power_kw = max_power_kw
+        self.target_power_kw = 0
+        self.actual_power_kw = 0
+
+    def update_irradiance(self, irradiance: float):
+        self.max_power_kw = self.max_power_kw * irradiance
         
-myBattery = Battery("Ryan's Battery", 2000, 500, -500)
-myBattery.set_target_power(100)
-while myBattery.get_state()["State of Charge"] < 1:
-    myBattery.step(1)
-    state = myBattery.get_state()
-    print(f"The current state of charge in {state["Name"]} is: {state["State of Charge"]:.1%}") 
-    print(f"The current target power in {state["Name"]} is: {state["Current Target Power"]} kW") 
+    def set_target_power(self, target_power_kw):
+        #RZW add logging when clipping and improve logic
+        if target_power_kw < 0:
+            self.target_power_kw = 0
+        elif target_power_kw > self.max_power_kw:
+            self.target_power_kw = self.max_power_kw
+        else:
+            self.target_power_kw = target_power_kw
+
+    def step(self, dt_hr):
+        self.actual_power_kw = min(self.target_power_kw, self.max_power_kw)
+
+    def get_state(self) -> dict:
+        state = {
+            "Name": self.name,
+            "Current Target Power": self.target_power_kw,
+            "Current Actual Power": self.actual_power_kw
+        }
+        return state
