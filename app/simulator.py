@@ -35,7 +35,6 @@ class Simulator:
 solar = Solar("Solar A", 3000)
 battery = Battery("Battery A", 2000, 500)
 sim = Simulator([solar, battery], controller=basic_controller)
-# history_file = os.path.join('../bin',f'history_{math.floor(time.time())}.csv')
 if os.path.exists('../bin/history.csv'):
     os.remove('../bin/history.csv')
 else:

@@ -1,13 +1,6 @@
-from models import *
+import pandas as pd
 
-myBattery = Battery("Li-On Battery", 2000, 500)
-myBattery.set_target_power(100)
-print(myBattery.get_state())
-myBattery.step(1)
-print(myBattery.get_state())
+df = pd.read_csv('../bin/history.csv')
 
-mySolar = Solar("Rooftop PV", 300)
-mySolar.set_target_power(350)
-print(mySolar.get_state())
-mySolar.step(1)
-print(mySolar.get_state())
+ders_list = df.der_name.unique()
+print(ders_list)

@@ -8,3 +8,7 @@ Stack to potentially consider:
 - State Storage: SQLite or in-memory dict. Keeps it lightweight
 - Dashboard: Streamlit or Plotly Dash for fast prototyping, interactive charts
 - Task Loop: asyncio or APScheduler for time-based updates
+
+#Dependencies:
+- Dash
+- Pandas
